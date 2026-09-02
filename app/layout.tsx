@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import "./globals.css";
+export const metadata: Metadata={metadataBase:new URL(process.env.NEXT_PUBLIC_SITE_URL||"https://example.com"),title:{default:"엔지니어랩 수강 가이드 | 할인코드 e1572",template:"%s"},description:"전기기사·전기산업기사·전기공사기사·소방설비기사 강의와 공부법, 엔지니어랩 할인코드 e1572 정보를 정리한 수강 가이드입니다."};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ko"><body><header className="header"><a href="/" className="brand">ENGINEER LAB GUIDE</a><nav><a href="/electric-engineer">전기기사</a><a href="/fire-equipment-engineer">소방설비기사</a><a href="/engineerlab-review">후기</a><a href="/engineerlab-discount-code">할인코드</a></nav></header>{children}<footer><b>엔지니어랩 수강 가이드</b><p>강의·시험 준비 정보를 제공하는 정보형 사이트입니다. 실제 상품 가격과 혜택은 공식 판매 페이지에서 최종 확인하세요.</p></footer></body></html>}
