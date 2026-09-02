@@ -3,6 +3,7 @@ import Coupon from "./Coupon";
 import SuccessVideos from "./SuccessVideos";
 import pages from "../data/pages.json";
 import {articleContent} from "../data/articleContent";
+import {cleanSeoText} from "../lib/seoText";
 
 export type Page={slug:string,title:string,h1:string,description:string,category:string,keywords:string[],hero:string};
 
@@ -18,21 +19,22 @@ const faqByCategory:Record<string,[string,string][]>={
 
 export default function Article({p}:{p:Page}){
  const unique=articleContent[p.slug];
+ const description=cleanSeoText(p.description);
  const idx=[...p.slug].reduce((a,c)=>a+c.charCodeAt(0),0)%imagePool.length;
  const images=[imagePool[idx],imagePool[(idx+3)%imagePool.length]];
  const related=(pages as Page[]).filter(x=>x.slug!==p.slug&&(x.category===p.category||x.keywords.some(k=>p.keywords.includes(k)))).slice(0,3);
  const faqs=faqByCategory[p.category]||faqByCategory["학습가이드"];
- const jsonLd={"@context":"https://schema.org","@type":"Article",headline:p.h1,description:p.description,mainEntityOfPage:`https://engineerlab-e1572.vercel.app/${p.slug}`,keywords:p.keywords.join(", ")};
+ const jsonLd={"@context":"https://schema.org","@type":"Article",headline:p.h1,description,mainEntityOfPage:`https://engineerlab-e1572.vercel.app/${p.slug}`,keywords:p.keywords.join(", ")};
  return <main>
-  <section className="articleHero"><div><span className="eyebrow">{p.category}</span><h1>{p.h1}</h1><p>{p.description}</p><Coupon compact/></div><div className="heroImage"><Image src={`/images/${p.hero}`} alt={`${p.keywords[0]} 관련 강의 자료`} fill priority sizes="(max-width:800px) 100vw, 42vw"/></div></section>
+  <section className="articleHero"><div><span className="eyebrow">{p.category}</span><h1>{p.h1}</h1><p>{description}</p><Coupon compact/></div><div className="heroImage"><Image src={`/images/${p.hero}`} alt={`${p.keywords[0]} 관련 강의 자료`} fill priority sizes="(max-width:800px) 100vw, 42vw"/></div></section>
   <article className="content">
    <div className="toc"><b>이 글에서 확인할 내용</b>{unique?.sections.map(([h],i)=><a key={h} href={`#point${i+1}`}>{h}</a>)}{p.slug==="engineerlab-review"&&<a href="#videos">합격생 영상 보기</a>}<a href="#apply">할인코드 e1572 적용 확인</a></div>
-   <p className="articleLead">{unique?.lead||p.description}</p>
+   <p className="articleLead">{unique?.lead||description}</p>
    {unique?.sections.map(([heading,text],i)=><section id={`point${i+1}`} key={heading}><h2>{heading}</h2><p>{text}</p>{i===1&&<div className="imageGrid"><Image src={`/images/${images[0]}`} width={800} height={430} alt={`${p.keywords[0]} 강의 화면 자료`}/><Image src={`/images/${images[1]}`} width={800} height={430} alt={`${p.keywords[Math.min(1,p.keywords.length-1)]} 학습 자료`}/></div>}</section>)}
    {p.slug==="engineerlab-review"&&<section id="videos"><h2>합격생 영상으로 실제 학습 경험 확인하기</h2><p>제공받은 합격생 영상 3편을 바로 재생할 수 있도록 연결했습니다. 자신과 비슷한 준비 조건의 사례를 중심으로 시청하면 후기 내용을 판단하는 데 도움이 됩니다.</p><SuccessVideos compact/></section>}
    <section className="keywordContext"><h2>{p.keywords[0]} 검색에서 함께 확인할 내용</h2><p>{p.keywords.slice(0,4).join(" · ")}처럼 비슷한 검색어라도 원하는 정보는 조금씩 다를 수 있습니다. 시험 단계, 현재 수준, 남은 준비 기간을 먼저 정하고 필요한 강좌와 학습 자료를 좁혀보세요. 페이지의 강의 자료와 후기 이미지는 수강 판단을 돕는 참고 자료로 활용할 수 있습니다.</p></section>
    <section id="apply" className="apply"><h2>수강을 결정했다면 할인코드 e1572 확인</h2><p>강좌와 수강 조건을 모두 확인했다면 결제 전에 <b>e1572</b>를 복사해 두세요. 코드 입력란이 있는 경우 정확히 입력하고, 적용 대상·할인 금액·이벤트 기간은 공식 결제 화면의 최종 조건을 기준으로 확인하는 것이 안전합니다.</p><Coupon/></section>
-   {related.length>0&&<section><h2>함께 보면 좋은 엔지니어랩 수강 가이드</h2><div className="relatedLinks">{related.map(r=><a key={r.slug} href={`/${r.slug}`}><b>{r.h1}</b><span>{r.description}</span></a>)}</div></section>}
+   {related.length>0&&<section><h2>함께 보면 좋은 엔지니어랩 수강 가이드</h2><div className="relatedLinks">{related.map(r=><a key={r.slug} href={`/${r.slug}`}><b>{r.h1}</b><span>{cleanSeoText(r.description)}</span></a>)}</div></section>}
    <section><h2>자주 묻는 질문</h2>{faqs.map(([q,a])=><details key={q}><summary>{q}</summary><p>{a}</p></details>)}</section>
   </article>
   <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jsonLd)}}/>
