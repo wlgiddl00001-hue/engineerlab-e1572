@@ -29,6 +29,7 @@ export default function Article({p}:{p:Page}){
  const faqs=faqByCategory[p.category]||faqByCategory["학습가이드"];
  const jsonLd={"@context":"https://schema.org","@type":"Article",headline:displayH1,description:displayDescription,mainEntityOfPage:`https://engineerlab-e1572.vercel.app/${p.slug}`,keywords:p.keywords.join(", ")};
  return <main>
+  <section className="articleDiscountBar"><div><span>엔지니어랩 수강 혜택</span><strong>e1572 · 총 60,000원 할인</strong><a href="/engineerlab-discount-code">할인 적용방법 보기 →</a></div></section>
   <section className="articleHero"><div><span className="eyebrow">{isDiscount?"e1572 · 총 6만원 할인":p.category}</span><h1>{displayH1}</h1><p>{displayDescription}</p><Coupon compact/></div><div className="heroImage"><Image src={`/images/${p.hero}`} alt={`${p.keywords[0]} 관련 강의 자료`} fill priority sizes="(max-width:800px) 100vw, 42vw"/></div></section>
   <article className="content">
    <div className="toc"><b>이 글에서 확인할 내용</b>{isDiscount&&<><a href="#discount-summary">e1572 6만원 할인 핵심 요약</a><a href="#discount-steps">할인코드 적용 3단계</a></>}{unique?.sections.map(([h],i)=><a key={h} href={`#point${i+1}`}>{h}</a>)}{p.slug==="engineerlab-review"&&<a href="#videos">합격생 영상 보기</a>}<a href="#apply">e1572 6만원 할인 확인</a></div>
